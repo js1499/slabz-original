@@ -1,66 +1,84 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Navbar } from "@/components/navbar"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import Image from "next/image"
-import { ArrowLeft, Info, Share2, ShoppingCart } from "lucide-react"
-import Link from "next/link"
+import { useState } from "react";
+import { Navbar } from "@/components/navbar";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import { ArrowLeft, Info, Share2, ShoppingCart } from "lucide-react";
+import Link from "next/link";
 
-// Mock data for a drop
 const DROP = {
   id: "1",
   name: "Umbreon VMAX",
   price: 1500,
-  image: "/placeholder.svg?height=400&width=300",
+  image: "/images/cards/ES Umbreon VMAX Alt Art PSA 10.png",
   packColor: "yellow",
   totalQuantity: 100,
   remainingQuantity: 37,
   description:
     "Chance to win a PSA 10 Umbreon VMAX Alt Art from Evolving Skies, one of the most sought-after modern Pokémon cards.",
   odds: [
-    { name: "PSA 10 Umbreon VMAX Alt Art", odds: "1:500", value: 2500 },
-    { name: "PSA 9 Umbreon VMAX Alt Art", odds: "1:250", value: 1200 },
-    { name: "PSA 10 Umbreon VMAX", odds: "1:100", value: 500 },
-    { name: "PSA 9 Umbreon VMAX", odds: "1:50", value: 250 },
-    { name: "PSA 10 Umbreon V", odds: "1:25", value: 150 },
+    {
+      name: "PSA 10 Umbreon VMAX Alt Art",
+      odds: "1:500",
+      value: 2500,
+      image: "/images/cards/ES Umbreon VMAX Alt Art PSA 10.png",
+    },
+    {
+      name: "PSA 9 Umbreon VMAX Alt Art",
+      odds: "1:250",
+      value: 1200,
+      image: "/images/cards/umbreon-vmax-alt-psa9.png",
+    },
+    {
+      name: "PSA 10 Umbreon VMAX",
+      odds: "1:100",
+      value: 500,
+      image: "/images/cards/umbreon-vmax-psa10.png",
+    },
+    {
+      name: "PSA 9 Umbreon VMAX",
+      odds: "1:50",
+      value: 250,
+      image: "/images/cards/umbreon-vmax-psa9.png",
+    },
+    {
+      name: "PSA 10 Umbreon V",
+      odds: "1:25",
+      value: 150,
+      image: "/images/cards/umbreon-v-psa10.png",
+    },
   ],
   recentPulls: [
     { user: "pokemon_master", card: "PSA 9 Umbreon VMAX", time: "2 minutes ago" },
     { user: "cardcollector99", card: "PSA 10 Umbreon V", time: "5 minutes ago" },
     { user: "umbreon_lover", card: "PSA 10 Umbreon VMAX", time: "12 minutes ago" },
   ],
-}
+};
 
-export default function DropPage({ params }: { params: { id: string } }) {
-  const [isRipping, setIsRipping] = useState(false)
-  const [isRevealed, setIsRevealed] = useState(false)
-  const [pulledCard, setPulledCard] = useState<null | { name: string; image: string }>(null)
+export default function DropPage() {
+  const [isRipping, setIsRipping] = useState(false);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [pulledCard, setPulledCard] = useState<null | { name: string; image: string }>(null);
 
   const handleRip = () => {
-    setIsRipping(true)
-
-    // Simulate the ripping animation and then reveal a card
+    setIsRipping(true);
     setTimeout(() => {
-      setIsRipping(false)
-      setIsRevealed(true)
-
-      // Randomly select a card from the odds list
-      const randomIndex = Math.floor(Math.random() * DROP.odds.length)
-      setPulledCard({
-        name: DROP.odds[randomIndex].name,
-        image: "/placeholder.svg?height=400&width=300",
-      })
-    }, 1500)
-  }
+      setIsRipping(false);
+      setIsRevealed(true);
+      const randomIndex = Math.floor(Math.random() * DROP.odds.length);
+      const selected = DROP.odds[randomIndex];
+      setPulledCard({ name: selected.name, image: selected.image });
+    }, 1500);
+  };
 
   const handleRipAgain = () => {
-    setIsRevealed(false)
-    setPulledCard(null)
-  }
+    setIsRevealed(false);
+    setPulledCard(null);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -77,12 +95,12 @@ export default function DropPage({ params }: { params: { id: string } }) {
           <div className="flex flex-col items-center justify-center">
             {!isRevealed ? (
               <div className={`relative w-full max-w-md aspect-[3/4] ${isRipping ? "rip-animation" : ""}`}>
-                <Image src={DROP.image || "/placeholder.svg"} alt={DROP.name} fill className="object-contain" />
+                <Image src={DROP.image} alt={DROP.name} fill className="object-contain" />
               </div>
             ) : (
               <div className="card-reveal relative w-full max-w-md aspect-[3/4]">
                 <Image
-                  src={pulledCard?.image || "/placeholder.svg?height=400&width=300"}
+                  src={pulledCard?.image || "/placeholder.svg"}
                   alt={pulledCard?.name || "Revealed Card"}
                   fill
                   className="object-contain"
@@ -190,5 +208,5 @@ export default function DropPage({ params }: { params: { id: string } }) {
         </div>
       </main>
     </div>
-  )
+  );
 }
