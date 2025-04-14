@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function Navbar() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const pathname = usePathname()
+  const [searchQuery, setSearchQuery] = useState("");
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -20,11 +20,10 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2">
             <div className="relative h-8 w-8">
               <Image
-                src="/placeholder.svg?height=32&width=32"
+                src="/images/logo.png"
                 alt="SLABZ Logo"
-                width={32}
-                height={32}
-                className="object-contain"
+                fill
+                className="object-contain rounded"
               />
             </div>
             <span className="text-2xl font-bold text-white">slabz</span>
@@ -49,7 +48,7 @@ export function Navbar() {
             href="/how-it-works"
             className={cn(
               "hidden sm:block text-sm font-medium transition-colors hover:text-primary",
-              pathname === "/how-it-works" ? "text-primary" : "text-muted-foreground",
+              pathname === "/how-it-works" ? "text-primary" : "text-muted-foreground"
             )}
           >
             how does it work?
@@ -67,5 +66,5 @@ export function Navbar() {
         </nav>
       </div>
     </header>
-  )
+  );
 }
