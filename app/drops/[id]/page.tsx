@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { ArrowLeft, Info, Share2, ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import { DropReveal } from "@/components/DropReveal";
 
 const DROP = {
   id: "1",
@@ -26,30 +27,35 @@ const DROP = {
       odds: "1:500",
       value: 2500,
       image: "/images/cards/ES Umbreon VMAX Alt Art PSA 10.png",
+      rarity: "legendary",
     },
     {
       name: "PSA 9 Umbreon VMAX Alt Art",
       odds: "1:250",
       value: 1200,
       image: "/images/cards/umbreon-vmax-alt-psa9.png",
+      rarity: "epic",
     },
     {
       name: "PSA 10 Umbreon VMAX",
       odds: "1:100",
       value: 500,
       image: "/images/cards/umbreon-vmax-psa10.png",
+      rarity: "epic",
     },
     {
       name: "PSA 9 Umbreon VMAX",
       odds: "1:50",
       value: 250,
       image: "/images/cards/umbreon-vmax-psa9.png",
+      rarity: "rare",
     },
     {
       name: "PSA 10 Umbreon V",
       odds: "1:25",
       value: 150,
       image: "/images/cards/umbreon-v-psa10.png",
+      rarity: "common",
     },
   ],
   recentPulls: [
@@ -60,23 +66,13 @@ const DROP = {
 };
 
 export default function DropPage() {
-  const [isRipping, setIsRipping] = useState(false);
-  const [isRevealed, setIsRevealed] = useState(false);
-  const [pulledCard, setPulledCard] = useState<null | { name: string; image: string }>(null);
+  const [showReveal, setShowReveal] = useState(false);
+  const [pulledCard, setPulledCard] = useState<null | { name: string; image: string; rarity: string }>(null);
+  const [revealKey, setRevealKey] = useState(0);
 
   const handleRip = () => {
-    setIsRipping(true);
-    setTimeout(() => {
-      setIsRipping(false);
-      setIsRevealed(true);
-      const randomIndex = Math.floor(Math.random() * DROP.odds.length);
-      const selected = DROP.odds[randomIndex];
-      setPulledCard({ name: selected.name, image: selected.image });
-    }, 1500);
-  };
-
-  const handleRipAgain = () => {
-    setIsRevealed(false);
+    setRevealKey((prev) => prev + 1);
+    setShowReveal(true);
     setPulledCard(null);
   };
 
@@ -85,42 +81,57 @@ export default function DropPage() {
       <Navbar />
 
       <main className="flex-1 container py-8">
-        <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6">
+        <Link
+          href="/drops/1"
+          onClick={() => {
+            setShowReveal(false);
+            setPulledCard(null);
+          }}
+          className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-6"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to all drops
         </Link>
 
+        {showReveal && (
+          <div className="z-50">
+            <DropReveal
+              key={revealKey}
+              odds={DROP.odds}
+              onFinish={(card) => setPulledCard(card)}
+            />
+            <div className="absolute inset-0 z-50 flex flex-col items-center justify-end pb-12">
+              <div className="flex gap-4">
+                <Button variant="outline" onClick={handleRip}>
+                  Rip Again
+                </Button>
+                <Button onClick={() => { setPulledCard(null); setShowReveal(false); }}>
+                  Return
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column - Card Display */}
           <div className="flex flex-col items-center justify-center">
-            {!isRevealed ? (
-              <div className={`relative w-full max-w-md aspect-[3/4] ${isRipping ? "rip-animation" : ""}`}>
+            {!pulledCard && (
+              <div className="relative w-full max-w-md aspect-[3/4]">
                 <Image src={DROP.image} alt={DROP.name} fill className="object-contain" />
-              </div>
-            ) : (
-              <div className="card-reveal relative w-full max-w-md aspect-[3/4]">
-                <Image
-                  src={pulledCard?.image || "/placeholder.svg"}
-                  alt={pulledCard?.name || "Revealed Card"}
-                  fill
-                  className="object-contain"
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                  <h3 className="text-lg font-bold text-white">{pulledCard?.name}</h3>
-                </div>
               </div>
             )}
 
-            {!isRevealed ? (
-              <Button size="lg" className="mt-8 px-8 py-6 text-lg font-bold" onClick={handleRip} disabled={isRipping}>
-                {isRipping ? "Ripping..." : "RIP NOW"}
+            {!pulledCard ? (
+              <Button size="lg" className="mt-8 px-8 py-6 text-lg font-bold" onClick={handleRip}>
+                RIP NOW
               </Button>
             ) : (
               <div className="flex flex-col items-center mt-8 space-y-4">
                 <h3 className="text-xl font-bold">Congratulations!</h3>
-                <p className="text-center text-muted-foreground">You pulled a {pulledCard?.name}</p>
+                <p className="text-center text-muted-foreground">You pulled a {pulledCard.name}</p>
                 <div className="flex gap-4">
-                  <Button variant="outline" onClick={handleRipAgain}>
+                  <Button variant="outline" onClick={handleRip}>
                     Rip Again
                   </Button>
                   <Button>
